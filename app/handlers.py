@@ -1,7 +1,8 @@
 from aiogram import F, Router
 
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from aiogram.filters import CommandStart, Command
+import app.keyboards as kb
 
 router = Router()
 
@@ -21,3 +22,18 @@ async def get_help(message: Message):
 @router.message(F.text.lower() == "how are you")
 async def how_are_you(message: Message):
     await message.answer("I'm fine")
+
+@router.message(F.text.lower() == "menu")
+async def inline(message: Message):
+    await message.answer("Options: ", reply_markup=kb.setting)
+
+
+@router.callback_query(F.data == "add_event")
+async def add_event(callback: CallbackQuery):
+    await callback.answer('')
+    await callback.message.answer("Podaj datę")
+
+@router.callback_query(F.data == "my_events")
+async def my_events(callback: CallbackQuery):
+    await callback.answer('')
+    await callback.message.answer('hh')
