@@ -3,8 +3,6 @@ from aiogram import F, Router
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import CommandStart, Command
 from aiogram.fsm.state import State, StatesGroup
-
-
 router = Router()
 
 class Event(StatesGroup):
@@ -27,8 +25,6 @@ async def get_help(message: Message):
 @router.message(F.text.lower() == "how are you")
 async def how_are_you(message: Message):
     await message.answer("I'm fine")
-
-
 
 @router.callback_query(F.data == "my_events")
 async def my_events(callback: CallbackQuery):
