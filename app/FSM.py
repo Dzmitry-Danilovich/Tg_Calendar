@@ -10,7 +10,7 @@ class Event(StatesGroup):
     datas = State()
     event = State()
     time_ev = State()
-
+    save = State()
 
 @router.message(F.text.lower() == "menu")
 async def inline(message: Message):
@@ -40,5 +40,16 @@ async def add_data(message: Message, state: FSMContext):
 async def add_time(message: Message, state: FSMContext):
     await state.update_data(time_ev=message.text)
     person_event = await state.get_data()
-    await message.answer(f'dane: {person_event}')
+    await message.answer(f"Data: {person_event['datas']} \n Event: {person_event['event']} \n Godzina przypomnienia {person_event['time_ev']}")
+    await message.answer('Czy chesz zapisać zdarzenie w Calendar?', reply_markup=kb.saves)
+
+
+@router.callback_query(F.data ==  'tak')
+async def zapisz(message: Message, state: FSMContext):
+    await message.answer("wybarana opcja tak")
     await state.clear()
+
+@router.callback_query(F.data == 'nie')
+async def delete(message: Message, state: FSMContext):
+    await state.clear()
+
