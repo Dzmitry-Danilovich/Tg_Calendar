@@ -12,6 +12,7 @@ class Event(StatesGroup):
     time_ev = State()
     save = State()
 
+
 @router.message(F.text.lower() == "menu")
 async def inline(message: Message):
     await message.answer("Options: ", reply_markup=kb.setting)
