@@ -3,10 +3,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.state import State, StatesGroup
 import app.keyboards as kb
-import sqlite3
 from datetime import datetime
 
-db = sqlite3.connect('telegram_event.db')
 router = Router()
 
 class Event(StatesGroup):
