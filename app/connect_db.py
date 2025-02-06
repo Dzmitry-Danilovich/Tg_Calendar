@@ -7,7 +7,7 @@ class ManagementEvent:
         self.connect = sqlite3.connect(self.db_name)
         self.cursor = self.connect.cursor()
         self.cursor.execute("""
-            GREATE TABLE IF NOT EXISTS Events(
+            CREATE TABLE IF NOT EXISTS Events(
             id INTEGER PRIMARY KEY,
             event TEXT NOT NULL,
             date TEXT NOT NULL,
@@ -24,5 +24,6 @@ class ManagementEvent:
         self.cursor.execute("SELECT * FROM Events WHERE id = ?", (id_user,))
         self.cursor.fetchall()
 
+    def __del__(self):
+        self.connect.close()
 
-db = ManagementEvent('telegram_event.db')

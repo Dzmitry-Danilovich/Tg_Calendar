@@ -4,8 +4,10 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.state import State, StatesGroup
 import app.keyboards as kb
 from datetime import datetime
+from app.connect_db import ManagementEvent
 
 router = Router()
+db = ManagementEvent('telegram_event.db')
 
 class Event(StatesGroup):
     datas = State()
@@ -22,6 +24,10 @@ async def inline(message: Message):
 async def add_event(callback: CallbackQuery, state: FSMContext):
     await state.set_state(Event.event)
     await callback.message.answer("Podaj datę: dd-mm-rrrr")
+
+@router.callback_query(F.data == 'my_events')
+async def my_events(callback: CallbackQuery):
+    await callback.message.answer(db.show_event(callback.message.from_user.id))
 
 @router.message(Event.event)
 async def add_event_two(message: Message, state: FSMContext):
@@ -51,13 +57,18 @@ async def add_time(message: Message, state: FSMContext):
         await message.answer('Podana zła godzina')
 
 @router.callback_query(F.data ==  'tak')
-async def zapisz(message: Message, state: FSMContext):
-    await message.answer("wybarana opcja tak")
-    await state.clear()
+async def zapisz(callback: CallbackQuery, state: FSMContext):
+    try:
+        person = await state.get_data()
+        db.add_event(callback.message.from_user.id, person['event'], person['datas'], person['time_ev'])
+        await callback.message.answer("Działa")
+        await state.clear()
+    except ValueError:
+        await callback.message.answer("Coś poszło nie tal")
 
 @router.callback_query(F.data == 'nie')
 async def delete(message: Message, state: FSMContext):
     await message.answer('jest tekst')
     await state.clear()
 
-db.close()
+
